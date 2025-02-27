@@ -1,0 +1,40 @@
+{
+  "name": "react-ts-study",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config ./config/vite.config.dev.ts",
+    "build:testing": "vite build --config ./config/vite.config.testing.ts && npm run postbuild",
+    "build:prod": "vite build --config ./config/vite.config.prod.ts",
+    "build:check": "vue-tsc --noEmit --skipLibCheck && vite build --config ./config/vite.config.prod.ts",
+    "postbuild": "node ./zip.js"
+  },
+  "dependencies": {
+    "antd": "^5.12.4",
+    "axios": "^1.6.8",
+    "compressing": "^1.10.0",
+    "dayjs": "^1.11.10",
+    "echarts": "^5.4.3",
+    "history": "^5.3.0",
+    "js-cookie": "^3.0.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.0",
+    "redux": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "less": "^4.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}

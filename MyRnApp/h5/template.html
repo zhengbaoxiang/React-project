@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=0,viewport-fit=cover"
+    />
+    <meta
+      http-equiv="Cache-control"
+      content="no-cache, no-store, must-revalidate, proxy-revalidate"
+    />
+    <meta content="telephone=no" name="format-detection" />
+    <style>
+      html {
+        margin: 0 auto;
+        height: 100%;
+        /* max-width: 450px !important; */
+        overflow-x: hidden;
+      }
+      body {
+        height: 100%;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-text-size-adjust: 100% !important;
+      }
+      #root {
+        height: 100%;
+      }
+      #root > div {
+        height: 100%;
+      }
+      input {
+        outline: none;
+      }
+      /* web隐藏滚动条 */
+      .hiddenScrollBar ::-webkit-scrollbar { 
+        display: none;
+       }
+    </style>
+
+    <script>
+      var _params_ = {}
+
+      window._SDK_Entry_ = {
+        _Page_: '',
+        _Params_: _params_
+      }
+    </script>
+    
+    <%= htmlWebpackPlugin.options.vConsoleScript %>
+
+    <script>
+      ;(function () {
+        if (
+          typeof WeixinJSBridge == 'object' &&
+          typeof WeixinJSBridge.invoke == 'function'
+        ) {
+          handleFontSize()
+        } else {
+          if (document.addEventListener) {
+            document.addEventListener(
+              'WeixinJSBridgeReady',
+              handleFontSize,
+              false
+            )
+          } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', handleFontSize)
+            document.attachEvent('onWeixinJSBridgeReady', handleFontSize)
+          }
+        }
+
+        function handleFontSize() {
+          WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
+          WeixinJSBridge.on('menu:setfont', function () {
+            WeixinJSBridge.invoke('setFontSizeCallback', { fontSize: 0 })
+          })
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div style="display: none">
+      <iframe id="iosLoadData" name="iosLoadData"></iframe>
+    </div>
+    <div style="display: none">
+      <iframe id="iosLoadData2" name="iosLoadData2"></iframe>
+    </div>
+    <div style="display: none">
+      <iframe id="iosLoadData3" name="iosLoadData3"></iframe>
+    </div>
+  </body>
+</html>

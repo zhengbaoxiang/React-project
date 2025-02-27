@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+<script>
+    // 格式化时间
+    function addZero(n, len = 2) {
+        n = n.toString();
+        while (n.length < len) {
+            n = '0' + n
+        }
+        return n;
+    }
+    const formatDate = (date, type = 'date') => {
+        if (!date) {
+            return null
+        }
+        let d = new Date(date);
+        let year = d.getFullYear();
+        let month = addZero(d.getMonth() + 1);
+        let day = addZero(d.getDate());
+        let hour = addZero(d.getHours());
+        let minutes = addZero(d.getMinutes());
+        let seconds = addZero(d.getSeconds());
+        let milliseconds = addZero(d.getMilliseconds(), 3)
+        // 日期
+        if (type === 'date') {
+            return `${year}-${month}-${day}`;
+            // 日期+时间
+        } else if (type === 'dateTime') {
+            return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}`;
+        } else if (type === 'millisecond') {
+            return `${year}-${month}-${day} ${hour}:${minutes}:${seconds}.000`;
+        } else if (type === 'HH:mm:ss.SSS') {
+            return `${hour}:${minutes}:${seconds}.${milliseconds}`;
+            // 月份
+        } else if (type === 'month') {
+            return `${year}-${month}`
+            // 年份
+        } else if (type === 'year') {
+            return year;
+        } else if (type === 'urlDate') {
+            return `${year}-${month}-${day}_${hour}_${minutes}_${seconds}`;
+        }
+    }
+    const f = {
+        fuzzy:'',
+        generateData() {
+            let dataTree = [];
+            let item,ele,temp,obj
+            console.log("-1>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            for (let i = 1; i <= 40; i++) {
+                item = {
+                    title: "一级标签-" + i,
+                    id: i,
+                    children: [],
+                };
+                for (let j = 1; j < 100; j++) {
+                    ele = {
+                        title: "二级标签-" + i + "-" + j,
+                        id: i + "-" + j,
+                        children: [],
+                    };
+                    for (let l = 1; l < 40; l++) {
+                        temp = {
+                            title: "三级标签-" + i + "-" + j + "-" + l,
+                            id: i + "-" + j + "-" + l,
+                        };
+                        ele.children.push(temp);
+                    }
+
+                    item.children.push(ele);
+                }
+                dataTree.push(item);
+            }
+            this.dataOrigin = dataTree;
+            // this.dataTree = dataTree;
+            console.log("-2>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            console.log("dataOrigin", this.dataOrigin);
+        },
+        btnClick(keyword) {
+            this.fuzzy = keyword
+            console.log('',keyword)
+
+            // 原先的过滤方案
+            this.serchData();
+            console.log('--------------')
+
+            // 优化后的方案
+            this.betterSearch();
+            console.log('---------------')
+
+            this.bestSearch()
+        },
+        bestSearch() {
+            console.log("-8>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            const keyword = this.fuzzy;
+            let result = [];
+
+            function getFilter(list,) {
+                let filterList = [];
+                list.forEach((item) => {
+                    if (item.title.includes(keyword)) {
+                        filterList.push(item);
+                    } else if (item.children && item.children.length) {
+                        let filterChildren = getFilter(item.children);
+                        if (filterChildren.length) {
+                            let itemCopy = {
+                                ...item,
+                                children: filterChildren,
+                            };
+                            filterList.push(itemCopy);
+                        }
+                    }
+                });
+                return filterList;
+            }
+
+            result = getFilter(this.dataOrigin);
+            console.log("-9>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            console.log("-bestSearch>", result);
+
+
+        },
+
+        betterSearch() {
+            console.log("-6>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            const keyword = this.fuzzy;
+            let result = [];
+
+            this.dataOrigin.forEach((item) => {
+                if (item.title.includes(keyword)) {
+                    result.push(item);
+                } else if (item.children.length > 0) {
+                    let l2 = [];
+                    item.children.forEach((ele) => {
+                        if (ele.title.includes(keyword)) {
+                            l2.push(ele);
+                        } else if (ele.children.length > 0) {
+                            let l3 = [];
+                            ele.children.forEach((l) => {
+                                if (l.title.includes(keyword)) {
+                                    l3.push(l);
+                                }
+                            });
+
+                            if (l3.length > 0) {
+                                let thirdObj = {
+                                    ...ele,
+                                    children: l3,
+                                };
+                                l2.push(thirdObj);
+                            }
+                        }
+                    });
+
+                    if (l2.length > 0) {
+                        let secObj = {
+                            ...item,
+                            children: l2,
+                        };
+                        result.push(secObj);
+                    }
+                }
+            });
+
+            console.log("-7>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            console.log("-betterSearch>", result);
+
+        },
+
+        serchData() {
+            // 1 clone数据
+            console.log("clon数据-3>", formatDate(new Date(), "HH:mm:ss.SSS"));
+
+            let copyList = this.clone(this.dataOrigin);
+
+            console.log("遍历匹配-4>", formatDate(new Date(), "HH:mm:ss.SSS"));
+
+            // 2 遍历匹配, 3 删除节点
+            this.filterList(copyList);
+            this.filterList(copyList);
+            this.filterList(copyList);
+
+            console.log("删除节点-5>", formatDate(new Date(), "HH:mm:ss.SSS"));
+            console.log("-copyList>", copyList);
+        },
+        clone(list) {
+            if(!list) return null
+            const result = [];
+            list.forEach((item) => {
+                let copyObj = {
+                    ...item,
+                    children: this.clone(item.children),
+                };
+                result.push(copyObj);
+            });
+            return result;
+        },
+        filterList(copyList) {
+            const keyword = this.fuzzy;
+            for (let i = copyList.length - 1; i >= 0; i--) {
+                let item = copyList[i];
+
+                if (item.children.length > 0) {
+                    for (let j = item.children.length - 1; j >= 0; j--) {
+                        let ele = item.children[j];
+                        if (ele.children.length > 0) {
+                            for (let l = ele.children.length - 1; l >= 0; l--) {
+                                let third = ele.children[l];
+                                if (third.title.includes(keyword)) {
+                                    continue;
+                                } else {
+                                    ele.children.splice(l, 1);
+                                    // this.deleteList(copyList,third.id)
+                                }
+                            }
+                        } else if (
+                            ele.children.length == 0 &&
+                            !ele.title.includes(keyword)
+                        ) {
+                            item.children.splice(j, 1);
+                            // this.deleteList(copyList,ele.id)
+                        }
+                    }
+                } else if (
+                    item.children.length == 0 &&
+                    !item.title.includes(keyword)
+                ) {
+                    copyList.splice(i, 1);
+                    // this.deleteList(copyList,item.id)
+                }
+            }
+        },
+        deleteList(copyList, id) {
+            for (let i = copyList.length - 1; i >= 0; i--) {
+                let item = copyList[i];
+                if (item.children.length > 0) {
+                    for (let j = item.children.length - 1; j >= 0; j--) {
+                        let ele = item.children[j];
+                        if (ele.children.length > 0) {
+                            for (let l = ele.children.length - 1; l >= 0; l--) {
+                                let third = ele.children[l];
+                                if (third.id == id) {
+                                    ele.children.splice(l, 1);
+                                }
+                            }
+                        } else if (ele.id == id) {
+                            item.children.splice(j, 1);
+                        }
+                    }
+                } else if (item.id == id) {
+                    copyList.splice(i, 1);
+                }
+            }
+        },
+    }
+setTimeout(() => {
+    f.generateData()
+    f.btnClick("三级标签-1-1-1")
+}, 0);
+
+
+
+
+</script>
+
+</html>

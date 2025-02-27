@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+let app = require('./app');
+let http = require('http');
+let qrcode = require('qrcode-terminal');
+let ip = require('ip');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+let port = process.env.PORT || 3000;
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+let server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port, '0.0.0.0');
+server.on('error', () => {
+  console.log(`localhost start failed!`);
+});
+server.on('listening', () => {
+  let addr = server.address();
+  let displayUrl = `http://${ip.address()}:${addr.port}/`;
+  console.log(`server start at: ${displayUrl}`);
+  qrcode.generate(displayUrl, { small: true });
+});
