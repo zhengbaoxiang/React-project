@@ -6,15 +6,9 @@
  */
 import dayjs from 'dayjs';
 import React, { useState, useEffect } from 'react';
-import {
-    Button,
-    DatePicker,
-    Form,
-    Input,
-    Select,
-} from 'antd';
+import { Button, DatePicker, Form, Input, Select, } from 'antd';
 import type { DatePickerProps } from 'antd';
-import { message } from "antd"  ;
+import { message } from "antd";
 const { TextArea } = Input;
 
 import { useNavigate, useLocation, useMatch, useParams } from 'react-router-dom';
@@ -31,10 +25,10 @@ const HandleForm: React.FC = () => {
     const [messageApi, contextHolder] = message.useMessage();
 
     const success = () => {
-      messageApi.open({
-        type: 'success',
-        content: 'This is a success message',
-      });
+        messageApi.open({
+            type: 'success',
+            content: 'This is a success message',
+        });
     };
 
     const location = useLocation();

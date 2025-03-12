@@ -1,13 +1,13 @@
 /*
  * @Date: 2023-12-20 15:35:59
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:24:35
+ * @LastEditTime: 2025-03-12 17:46:29
  * @descript: 文件描述
  */
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { Button, List } from 'antd';
-
+import "./study.less"
 
 export default function () {
     const navigate = useNavigate();
@@ -32,7 +32,6 @@ export default function () {
             <MyCom></MyCom>
             <MyButton count={count} onClick={handleClick}></MyButton>
             <MyButton count={count} onClick={handleClick}></MyButton>
-
 
             <ProductCon></ProductCon>
             <List
