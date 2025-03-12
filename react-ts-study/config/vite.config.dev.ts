@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-07-14 14:13:43
  * @LastEditors: zbx
- * @LastEditTime: 2024-04-26 09:04:04
+ * @LastEditTime: 2025-03-12 16:23:52
  * @descript: 文件描述
  */
 
@@ -36,11 +36,11 @@ export default mergeConfig(
     },
     {
         ...baseConfig,
-        base: '/public/', // 资源目录
+        base: '/front/', // 资源目录
         define: {
             'process.env': {
                 "mode": "dev",
-                "base": '/public', // 路由前缀
+                "base": '/front/', // 路由前缀
                 "baseURL": '/api',  // 接口路径
                 "serviceHost": 'http://172.31.227.198:8085',
             }

@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 15:15:07
  * @LastEditors: zbx
- * @LastEditTime: 2024-04-24 10:14:55
+ * @LastEditTime: 2025-03-12 16:42:38
  * @descript: 文件描述
  */
 import React from 'react'
@@ -11,7 +11,6 @@ import './index.less'
 import App from './App'
 
 // 貌似不支持全部引入，只能按需加载？还要插件？
-
 
 import { Provider } from 'react-redux'
 import store from '@/redux/index'

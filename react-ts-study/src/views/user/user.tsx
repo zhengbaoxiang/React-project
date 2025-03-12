@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-09-19 13:09:49
  * @LastEditors: zbx
- * @LastEditTime: 2023-12-21 19:24:59
+ * @LastEditTime: 2025-03-12 17:21:41
  * @descript: 文件描述
  */
 import { useState, useRef, useEffect,useImperativeHandle } from 'react';
@@ -9,6 +9,7 @@ import * as echarts from 'echarts'
 
 import { Routes, Route, Link } from "react-router-dom";
 import { Button } from 'antd';
+import "./user.css";
 
 export default function () {
     let [count, setCount] = useState(0);
@@ -103,14 +104,9 @@ export default function () {
         myChart && myChart.setOption(option)
 
     }
-    function f1() {
-        console.log('count123', this)
-        console.log('count123', count)
-    }
+  
 
     const btnClick = () => {
-        console.log('btnClick', count)
-        // setCount(count+1)
         setIsPlaying(!isPlaying)
 
         console.log('videoRef',videoRef)
@@ -119,7 +115,6 @@ export default function () {
 
     return (
         <>
-            <h1>用户列表页{count}</h1>
             <Button type="primary" status='success' onClick={btnClick} >arco_btn</Button>
             <VideoPlayer src={src} isPlaying={isPlaying} onRef={videoRef} ></VideoPlayer>
             <Link to="/">返回主页</Link>

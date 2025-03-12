@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Arco Design Pro",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "preview": "vite preview",
     "build": "vite build",

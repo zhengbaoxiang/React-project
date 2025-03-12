@@ -12,6 +12,7 @@ import { Button } from 'antd';
 export default function () {
 
     let navigate = useNavigate();
+    
     function loginClick() {
         console.log('click');
         navigate('/')

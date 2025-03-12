@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-04-23 17:35:32
  * @LastEditors: zbx
- * @LastEditTime: 2024-04-23 17:39:15
+ * @LastEditTime: 2025-03-12 16:12:11
  * @descript: 文件描述
  */
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
@@ -49,31 +49,31 @@ class HttpRequest {
         },
             (err) => {
                 // do something 请求报错
-                console.log('request-err',err)
+                console.log('request-err', err)
                 return Promise.reject(err);
             }
         )
         // 拦截响应
         instance.interceptors.response.use(
-            (response:AxiosResponse) => {
+            (response: AxiosResponse) => {
                 // dosomething 正常拿到接口响应，结构处理
                 return Promise.resolve(response)
             },
             (err) => {
                 // do something 响应出错
-                console.log('response-err',err)
+                console.log('response-err', err)
                 return Promise.reject(err)
             }
         )
     }
-    request(options:AxiosRequestConfig){
+    request(options: AxiosRequestConfig) {
         // 将接口自定义的请求头，与公共请求头合并
-        options = Object.assign(this.getInitConfig(),options)
+        options = Object.assign(this.getInitConfig(), options)
 
         // 创建一个实例对象，不使用axios本身
-        const instance = axios.create() 
+        const instance = axios.create()
         //使用实例。则instance拦截，不用实例则对axios拦截，返回axios,
-        this.interceptors(instance) 
+        this.interceptors(instance)
         return instance(options)
     }
 

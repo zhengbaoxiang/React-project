@@ -1,21 +1,13 @@
-/*
- * @Date: 2023-09-19 10:52:21
- * @LastEditors: zbx
- * @LastEditTime: 2023-10-08 16:52:40
- * @descript: 文件描述
- */
 import React from 'react'
-import { Routes, Route, Link } from "react-router-dom";
-import { Button } from "@arco-design/web-react";
+import "./user.css";
 
-import "./home.css";
 import { useState } from "react";
+import { Button } from 'antd';
 
-export default function Home() {
+
+export default function () {
     return (
         <>
-            <h4>主页</h4>
-            <Button type="primary" status='success'>arco_btn</Button>
             <div>
                 <MyApp data={{ id: 213, name: '的撒' }} />
                 <MyInput>sda</MyInput>
@@ -26,7 +18,7 @@ export default function Home() {
 
 class MyApp extends React.Component {
     // class创建的组件，有自己的私有数据和生命周期函数    
-    constructor(props) {
+    constructor(props: any) {
         super(props)    // 调用super之后，才能使用this.
         // class创建的组件中，使用外部传入的参数，无需接受，直接访问
         console.log('props:', this.props)
@@ -100,25 +92,25 @@ class MyApp extends React.Component {
 }
 
 class MyInput extends React.Component {
-        constructor(props) {
-            super(props);
-            this.myRef = React.createRef();  
-        }
-      handleClick() {
+    constructor(props) {
+        super(props);
+        this.myRef = React.createRef();
+    }
+    handleClick() {
         // 使用原生的 DOM API 获取焦点
         this.myRef.current.focus();
-      }
-      render() {
+    }
+    render() {
         //  当组件插入到 DOM 后，ref 属性添加一个组件的引用于到 this.refs
         return (
-          <div>
-            <input type="text" ref={this.myRef} />
-            <input
-              type="button"
-              value="点我输入框获取焦点"
-              onClick={this.handleClick.bind(this)}
-            />
-          </div>
+            <div>
+                <input type="text" ref={this.myRef} />
+                <input
+                    type="button"
+                    value="点我输入框获取焦点"
+                    onClick={this.handleClick.bind(this)}
+                />
+            </div>
         );
-      }
     }
+}

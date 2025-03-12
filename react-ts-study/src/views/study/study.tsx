@@ -1,26 +1,40 @@
 /*
- * @Date: 2023-09-19 15:47:42
+ * @Date: 2023-12-20 15:35:59
  * @LastEditors: zbx
- * @LastEditTime: 2023-12-18 14:43:58
+ * @LastEditTime: 2025-03-12 17:24:35
  * @descript: 文件描述
  */
-import { Routes, Route, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
-import { Button } from "@arco-design/web-react";
-import { List } from '@arco-design/web-react';
+import { Button, List } from 'antd';
+
 
 export default function () {
-    const [count, setCount] = useState(0);
-    
+    const navigate = useNavigate();
+    function loginClick() {
+        console.log('click');
+        // 以编程方式导
+        navigate('/')
+    }
 
-    function handleClick(params) {
+    const [count, setCount] = useState(0);
+
+    function handleClick(params: any) {
         console.log("You clicked me!-params", params);
         setCount(count + 2);
     }
-    return (
-        <div className='center'>
-            <Button type="primary">Hello Arco</Button>
 
+
+    return (
+        <div className='center' style={{ padding: "1rem " }}>
+            <Button onClick={loginClick}>navigate-返回主页</Button>
+            <p> <Link to="/"> Link - 返回主页</Link>            </p>
+            <MyCom></MyCom>
+            <MyButton count={count} onClick={handleClick}></MyButton>
+            <MyButton count={count} onClick={handleClick}></MyButton>
+
+
+            <ProductCon></ProductCon>
             <List
                 style={{ width: 622 }}
                 size='small'
@@ -32,18 +46,86 @@ export default function () {
                     'Beijing Volcengine Technology Co., Ltd.',
                     'China Beijing Bytedance Technology Co., Ltd.',
                 ]}
-                render={(item, index) => <List.Item key={index}>{item}</List.Item>}
+                renderItem={(item, index) => <List.Item key={index}>{item}</List.Item>}
             />
-            <h1>模板页</h1>
-
-            <Link to="/">返回主页</Link>
-            <MyCom></MyCom>
-            <ProductsList></ProductsList>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-            <ProductCon></ProductCon>
         </div>
     );
+}
+
+//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
+function MyCom() {
+    // 属性绑定
+    const user = {
+        name: "Hedy Lamarr",
+        imageUrl: "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp",
+        imageSize: 90,
+    };
+
+    // 事件触发
+    function onClick(params: any) {
+        console.log("You clicked me!", params);
+    }
+
+    // 列表渲染
+    const products = [
+        { title: "Cabbage", id: 1 },
+        { title: "Garlic", id: 2 },
+        { title: "Apple", id: 3, isFruit: true },
+    ];
+    const ListItems = products.map((pro) => {
+        return (
+            <li key={pro.id} style={{ color: pro.isFruit ? "red" : "green" }}>
+                {pro.title}
+            </li>
+        );
+    });
+
+    return (
+        <div>
+            <div>
+                {/* 数据绑定 */}
+                <button >{user.name}</button>
+
+                {/* 事件绑定 */}
+                <button onClick={onClick}>1-直接绑定函数变量</button>
+                <button onClick={e => {
+                    e.stopPropagation();
+                    onClick('自定义参数');
+                }}>2-箭头函数绑定按钮</button>
+
+                <img
+                    alt="样式、属性"
+                    className="avatar"
+                    src={user.imageUrl}
+                    style={{
+                        width: user.imageSize,
+                        height: user.imageSize,
+                    }}
+                />
+            </div>
+            {/* 列表渲染 */}
+            <ul>{ListItems}</ul>; 
+        </div> 
+    );
+}
+function MyButton({ count, onClick }:{count:number,onClick:any}) {
+    // 状态绑定、修改
+    const [number, setNumber] = useState(0);
+
+    return (
+        <div>
+            <button onClick={onClick}>1-Click 共享 - {count} - 次</button>
+            <button onClick={e => { e.stopPropagation(); onClick(123445); }}> 2- 共享{count}</button>
+            <button onClick={() => {
+                setNumber(42);
+                setNumber(number + 5);
+                setNumber(number + 5);
+                setNumber(n => n + 1);
+            }}>3、批量修改状态-{number}</button>
+
+
+        </div>
+    )
 }
 
 export function ProductCon() {
@@ -63,7 +145,6 @@ export function ProductCon() {
             <SearchBar
                 filterText={filterText}
                 inStockOnly={inStockOnly}
-                setFilterText={setFilterText}
                 onFilterTextChange={setFilterText}
                 onInStockOnlyChange={setInStockOnly}
             ></SearchBar>
@@ -93,7 +174,7 @@ export function SearchBar({
                 <input
                     type="checkbox"
                     checked={inStockOnly}
-                    onChange={(e) => {onInStockOnlyChange(e.target.value);console.log(inStockOnly)}}
+                    onChange={(e) => { onInStockOnlyChange(e.target.value); console.log(inStockOnly) }}
                 />{" "}
                 only show produce in stock
             </label>
@@ -139,7 +220,7 @@ export function ProductTable({ products, filterText, inStockOnly }) {
 export function ProductCatory({ category }) {
     return (
         <tr>
-            <th colSpan="2">{category}</th>
+            <th colSpan={2}>{category}</th>
         </tr>
     );
 }
@@ -155,79 +236,6 @@ export function ProductRow({ product }) {
             <td> {product.price} </td>
         </tr>
     );
-}
-
-//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
-function MyCom() {
-    const user = {
-        name: "Hedy Lamarr",
-        imageUrl:
-            "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/3ee5f13fb09879ecb5185e440cef6eb9.png~tplv-uwbnlip3yd-webp.webp",
-        imageSize: 90,
-    };
-
-    function onClick(params) {
-        console.log("You clicked me!", params);
-    }
-    return (
-        <div>
-            <button >{user.name}</button>
-            <button onClick={onClick}>1-{user.name}</button>
-            <button onClick={e => {
-                e.stopPropagation();
-                onClick(123445);
-            }}>2-按钮{user.name}</button>
-
-            <img
-                className="avatar"
-                alt="加载失败"
-                src={user.imageUrl}
-                style={{
-                    width: user.imageSize,
-                    height: user.imageSize,
-                }}
-            />
-        </div>
-    );
-}
-
-function ProductsList() {
-    const products = [
-        { title: "Cabbage", id: 1 },
-        { title: "Garlic", id: 2 },
-        { title: "Apple", id: 3, isFruit: true },
-    ];
-    const ListItems = products.map((pro) => {
-        return (
-            <li key={pro.id} style={{ color: pro.isFruit ? "red" : "green" }}>
-                {pro.title}
-            </li>
-        );
-    });
-    return <ul>{ListItems}</ul>;
-}
-
-function MyButton({ count, onClick }) {
-    const [number, setNumber] = useState(0);
-
-    return (
-        <div>
-            <button onClick={onClick}>1-Click 共享 - {count} - 次</button>
-            <button onClick={e => {
-                e.stopPropagation();
-                onClick(123445);
-            }}> 2- 共享{count}</button>
-
-
-            <button onClick={() => {
-                setNumber(number + 5);
-                setNumber(n => n + 1);
-                setNumber(42);
-            }}>5555555-{number}</button>
-
-
-        </div>
-    )
 }
 
 function MovingDot() {
