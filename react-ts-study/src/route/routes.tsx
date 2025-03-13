@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 19:53:11
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:33:03
+ * @LastEditTime: 2025-03-13 11:04:16
  * @descript: 文件描述
  */
 import { Suspense, lazy } from "react"
@@ -12,18 +12,21 @@ import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
 import Layout from "@/components/layout";
 // import Home from "@/views/home/home";
 
-// 懒加载  lazy()配合Suspense使用，可以实现路由的懒加载
+// 懒加载  lazy()配合Suspense使用，可以实现路由的懒加载,懒加载在无法开发时，实时更新
 const Home = lazy(() => import("@/views/home/home"))
 const Login = lazy(() => import("@/views/login/login"))
 
 const Template = lazy(() => import("@/views/template"))
-const Study = lazy(() => import("@/views/study/study"))
-
-
-const User = lazy(() => import("@/views/user/user"))
-const User2 = lazy(() => import("@/views/user/user-class"))
-
+// const Study = lazy(() => import("@/views/study/study"))
+// const User = lazy(() => import("@/views/user/user"))
+// const User2 = lazy(() => import("@/views/user/user-class"))
 const AlarmDetail = lazy(() => import("@/views/tanzhen/alarmDetail"))
+
+
+import  Study  from "@/views/study/study";
+import User from "@/views/user/user"
+import User2 from "@/views/user/user-class"
+
 
 export default [
     {

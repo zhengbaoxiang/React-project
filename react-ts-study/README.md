@@ -1,7 +1,7 @@
 <!--
  * @Date: 2023-12-20 15:15:07
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:41:39
+ * @LastEditTime: 2025-03-13 13:21:37
  * @descript: 文件描述
 -->
 # React + TypeScript + Vite
@@ -23,7 +23,7 @@
     学习react+ts+vite搭建项目
     学习react-router使用
     写一个学习基础语法过程的页面
-       属性、事件、状态、生命周期、列表渲染、表单处理、组件通信
+       属性数据绑定、事件、状态、生命周期、列表渲染、表单处理、组件通信
 
     写一个function组件做的页面
     写一个class组件做的页面

@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 15:35:59
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:54:55
+ * @LastEditTime: 2025-03-13 11:24:34
  * @descript: 文件描述
  */
 import { useNavigate, Link } from "react-router-dom";
@@ -10,48 +10,13 @@ import { Button, List } from 'antd';
 import "./study.less"
 
 export default function () {
-
+    // 状态管理，必须用setCount来改变count的值,否则不会触发重新渲染
     const [count, setCount] = useState(0);
-
     function handleClick(params: any) {
         console.log("You clicked me!-params", params);
         setCount(count + 2);
     }
 
-    // 以编程方式导航
-    const navigate = useNavigate();
-    function loginClick() {
-        navigate('/')
-    }
-
-    return (
-        <div className='center' style={{ padding: "1rem " }}>
-            <Button onClick={loginClick}>navigate-返回主页</Button>
-            <p> <Link to="/"> Link - 返回主页</Link>            </p>
-            <MyCom></MyCom>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-
-            <ProductCon></ProductCon>
-            <List
-                style={{ width: 622 }}
-                size='small'
-                header='List title'
-                dataSource={[
-                    'Beijing Bytedance Technology Co., Ltd.',
-                    'Bytedance Technology Co., Ltd.',
-                    'Beijing Toutiao Technology Co., Ltd.',
-                    'Beijing Volcengine Technology Co., Ltd.',
-                    'China Beijing Bytedance Technology Co., Ltd.',
-                ]}
-                renderItem={(item, index) => <List.Item key={index}>{item}</List.Item>}
-            />
-        </div>
-    );
-}
-
-//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
-function MyCom() {
     // 属性绑定
     const user = {
         name: "Hedy Lamarr",
@@ -78,35 +43,53 @@ function MyCom() {
         );
     });
 
+    // 以编程方式导航
+    const navigate = useNavigate();
+    function loginClick() {
+        navigate('/')
+    }
+
     return (
-        <div>
+        <div className='center' style={{ padding: "1rem " }}>
             <div>
-                {/* 数据绑定 */}
-                <button >{user.name}</button>
+                <div>
+                    {/* 数据绑定 */}
+                    <button >{user.name}</button>
 
-                {/* 事件绑定 */}
-                <button onClick={onClick}>1-直接绑定函数变量</button>
-                <button onClick={e => {
-                    e.stopPropagation();
-                    onClick('自定义参数');
-                }}>2-箭头函数绑定按钮</button>
+                    {/* 事件绑定 */}
+                    <button onClick={onClick}>1-直接绑定函数变量</button>
+                    <button onClick={e => { e.stopPropagation(); onClick('自定义参数'); }}>2-箭头函数绑定按钮</button>
 
-                <img
-                    alt="样式、属性"
-                    className="avatar"
-                    src={user.imageUrl}
-                    style={{
-                        width: user.imageSize,
-                        height: user.imageSize,
-                    }}
-                />
+                    <img
+                        alt="样式、属性"
+                        className="avatar"
+                        src={user.imageUrl}
+                        style={{
+                            width: user.imageSize,
+                            height: user.imageSize,
+                        }}
+                    />
+                </div>
+                {/* 列表渲染 */}
+                <ul>{ListItems}</ul>
             </div>
-            {/* 列表渲染 */}
-            <ul>{ListItems}</ul>; 
-        </div> 
+            <hr />
+            <MyButton count={count} onClick={handleClick}></MyButton>
+            <MyButton count={count} onClick={handleClick}></MyButton>
+            <hr />
+            <ProductCon></ProductCon>
+            <hr />
+            <p>
+                {/* <Link to="/"> Link - 返回主页  </Link> */}
+                <Button onClick={loginClick}>navigate-返回主页</Button>
+            </p>
+            <MovingDot></MovingDot>
+        </div>
     );
 }
-function MyButton({ count, onClick }:{count:number,onClick:any}) {
+
+//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
+function MyButton({ count, onClick }: { count: number, onClick: any }) {
     // 状态绑定、修改
     const [number, setNumber] = useState(0);
 
@@ -120,8 +103,6 @@ function MyButton({ count, onClick }:{count:number,onClick:any}) {
                 setNumber(number + 5);
                 setNumber(n => n + 1);
             }}>3、批量修改状态-{number}</button>
-
-
         </div>
     )
 }
@@ -155,12 +136,30 @@ export function ProductCon() {
     );
 }
 
+interface SearchBarProps {
+    filterText: string;
+    inStockOnly: boolean;
+    onFilterTextChange: (text: string) => void;
+    onInStockOnlyChange: (inStock: boolean) => void;
+}
+interface Product {
+    category: string;
+    price: string;
+    stocked: boolean;
+    name: string;
+}
+interface ProductTableProps {
+    products: Product[];
+    filterText: string;
+    inStockOnly: boolean;
+}
+
 export function SearchBar({
     filterText,
     inStockOnly,
     onFilterTextChange,
     onInStockOnlyChange,
-}) {
+}: SearchBarProps) {
     return (
         <div>
             <input
@@ -172,16 +171,18 @@ export function SearchBar({
                 <input
                     type="checkbox"
                     checked={inStockOnly}
-                    onChange={(e) => { onInStockOnlyChange(e.target.value); console.log(inStockOnly) }}
+                    onChange={(e) => { onInStockOnlyChange(e.target.checked); console.log(inStockOnly, e.target.checked) }}
                 />{" "}
-                only show produce in stock
+                only show produce in stock {inStockOnly + ''}
             </label>
         </div>
     );
 }
-export function ProductTable({ products, filterText, inStockOnly }) {
-    const rows = [];
-    let lastCategory = null;
+
+
+export function ProductTable({ products, filterText, inStockOnly }: ProductTableProps) {
+    const rows: any[] = [];
+    let lastCategory: string | null = null;
     products.forEach((item) => {
         if (item.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
             return;
@@ -215,14 +216,16 @@ export function ProductTable({ products, filterText, inStockOnly }) {
     );
 }
 
-export function ProductCatory({ category }) {
+export function ProductCatory({ category }: { category: string }) {
     return (
         <tr>
             <th colSpan={2}>{category}</th>
         </tr>
     );
 }
-export function ProductRow({ product }) {
+
+
+export function ProductRow({ product }: { product: Product }) {
     const name = product.stocked ? (
         product.name
     ) : (
@@ -237,31 +240,33 @@ export function ProductRow({ product }) {
 }
 
 function MovingDot() {
-    const [position, setPosition] = useState({
-        x: 0,
-        y: 0
-    });
+    const [position, setPosition] = useState({ x: 0, y: 0 });
     return (
         <div
             onPointerMove={e => {
-                position.x = e.clientX;
-                position.y = e.clientY;
+                setPosition({
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }}
             style={{
-                position: 'relative',
-                width: '100vw',
-                height: '100vh',
+                width: '100%',
+                height: '300px',
+                border: '1px solid black',
             }}>
-            <div style={{
-                position: 'absolute',
-                backgroundColor: 'red',
-                borderRadius: '50%',
-                transform: `translate(${position.x}px, ${position.y}px)`,
-                left: -10,
-                top: -10,
-                width: 20,
-                height: 20,
-            }} />
+            <div
+                onPointerMove={e => e.stopPropagation()}
+                style={{
+                    position: 'absolute',
+                    backgroundColor: 'red',
+                    borderRadius: '50%',
+                    transform: `translate(${position.x}px, ${position.y}px)`,
+                    left: -10,
+                    top: -10,
+                    width: 20,
+                    height: 20,
+                }}
+            />
         </div>
     );
 }
