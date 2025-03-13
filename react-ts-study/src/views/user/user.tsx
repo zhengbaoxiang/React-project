@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 17:41:05
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-13 17:55:57
+ * @LastEditTime: 2025-03-13 18:04:20
  * @descript: 文件描述
  */
 import "./user.css";
@@ -60,18 +60,6 @@ export default function () {
         role: '',
         startDate: '',
         endDate: '',
-    }
-    const onRoleChange = (value: string) => {
-        switch (value) {
-            case 'admin':
-                searchForm.setFieldValue('note', 'Hi, 管理员');
-                break;
-            case 'user':
-                searchForm.setFieldsValue({ note: 'Hi, 用户!' });
-                break;
-            default:
-        }
-        console.log(searchForm.getFieldsValue());
     }
     const onReset = () => {
         searchForm.resetFields();
@@ -248,17 +236,39 @@ export default function () {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
 
+     // 查询表单
+     const [pageForm] = Form.useForm()
+     const pageFormInitialValues = {
+         userNo: '',
+         username: '',
+         role: '',
+         startDate: '',
+         endDate: '',
+     }
+
+
     const toAdd = () => {
         showModal()
     }
     const toEdit = (data = {}) => {
         showModal()
     }
-
     const showModal = () => {
         setIsModalOpen(true);
     };
 
+    const onRoleChange = (value: string) => {
+        switch (value) {
+            case 'admin':
+                pageForm.setFieldValue('note', 'Hi, 管理员');
+                break;
+            case 'user':
+                pageForm.setFieldsValue({ note: 'Hi, 用户!' });
+                break;
+            default:
+        }
+        console.log(pageForm.getFieldsValue());
+    }
     const handleOk = () => {
         setConfirmLoading(true);
         setTimeout(() => {
@@ -291,7 +301,6 @@ export default function () {
                     <Form.Item name="role" label="角色" rules={[{ required: false }]}>
                         <Select
                             style={{ width: "120px" }}
-                            onChange={onRoleChange}
                             allowClear
                         >
                             <Option value="admin">管理员</Option>
@@ -326,11 +335,34 @@ export default function () {
                 />;
             </div>
 
-            <Modal title="个人信息"  width={1000} open={isModalOpen}
+            <Modal title="个人信息"  width={600} open={isModalOpen}
              onOk={handleOk} onCancel={handleCancel}>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
+                <div className="modalContent" style={{ padding: "20px" ,width:'100%'}}>
+                <Form
+                    form={pageForm}
+                    initialValues={pageFormInitialValues}
+                    layout={"horizontal"}
+                    wrapperCol={{ span: 14 }}
+                >
+                    <Form.Item name="username" label="姓名" rules={[{ required: false }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="userNo" label="账号" rules={[{ required: false }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="role" label="角色" rules={[{ required: false }]}>
+                        <Select
+                            // style={{ width: "120px" }}
+                            onChange={onRoleChange}
+                            allowClear
+                        >
+                            <Option value="admin">管理员</Option>
+                            <Option value="user">普通用户</Option>
+                        </Select>
+                    </Form.Item>
+                </Form>
+                    
+                </div>
             </Modal>
 
         </>
