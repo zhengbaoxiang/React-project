@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 17:41:05
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-13 20:10:33
+ * @LastEditTime: 2025-03-13 20:12:59
  * @descript: 文件描述
  */
 import "./user.css";
@@ -309,7 +309,7 @@ interface PageFormModalProps {
     onConfirm: () => void;
 }
 
-export const PageFormModal = forwardRef({ onConfirm },ref) => {
+export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
    
     // 使用此方法才能暴露出去内部方法,通过ref传给pageFormRef
     useImperativeHandle(ref, () => {
@@ -387,7 +387,7 @@ export const PageFormModal = forwardRef({ onConfirm },ref) => {
     const handleCancel = () => {
         pageForm.resetFields();
         setIsModalOpen(false);
-        onConfirm()
+        props.onConfirm()
     };
 
     return (
@@ -427,6 +427,6 @@ export const PageFormModal = forwardRef({ onConfirm },ref) => {
         </>
     )
 
-}
+})
 
 
