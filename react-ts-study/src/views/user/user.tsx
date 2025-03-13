@@ -1,11 +1,11 @@
 /*
  * @Date: 2023-12-20 17:41:05
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-13 18:04:20
+ * @LastEditTime: 2025-03-13 20:10:33
  * @descript: 文件描述
  */
 import "./user.css";
-import { useState, useRef, useEffect, useImperativeHandle } from 'react';
+import { useState, useEffect,useRef, forwardRef, useImperativeHandle } from 'react';
 import { Space } from 'antd';
 
 
@@ -138,8 +138,8 @@ export default function () {
             width: 120,
             render: (_: any, record: DataSourceType) => (
                 <Space size="small">
-                    <Button onClick={(e)=>{e.stopPropagation(),editClick(record)}} type="text" size='small'>编辑</Button>
-                    <Button onClick={(e)=>{e.stopPropagation(),deleteClick(record)}} type="text" danger size='small'>删除</Button>
+                    <Button onClick={(e) => { e.stopPropagation(), editClick(record) }} type="text" size='small'>编辑</Button>
+                    <Button onClick={(e) => { e.stopPropagation(), deleteClick(record) }} type="text" danger size='small'>删除</Button>
                 </Space>
             ),
         },
@@ -223,63 +223,26 @@ export default function () {
         getTableList(params)
     }
 
+
+    const pageFormRef = useRef(null);
+
     const editClick = (record: any) => {
         console.log('编辑', record);
-        toEdit(record)
+        pageFormRef?.current?.toEdit(record)
     }
     const deleteClick = (record: any) => {
         console.log('删除', record);
     }
-
-
-    // 弹窗modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [confirmLoading, setConfirmLoading] = useState(false);
-
-     // 查询表单
-     const [pageForm] = Form.useForm()
-     const pageFormInitialValues = {
-         userNo: '',
-         username: '',
-         role: '',
-         startDate: '',
-         endDate: '',
-     }
-
-
-    const toAdd = () => {
-        showModal()
+    const addClick = () => {
+        console.log('新增');
+        pageFormRef?.current?.toAdd()
     }
-    const toEdit = (data = {}) => {
-        showModal()
-    }
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
 
-    const onRoleChange = (value: string) => {
-        switch (value) {
-            case 'admin':
-                pageForm.setFieldValue('note', 'Hi, 管理员');
-                break;
-            case 'user':
-                pageForm.setFieldsValue({ note: 'Hi, 用户!' });
-                break;
-            default:
-        }
-        console.log(pageForm.getFieldsValue());
+    const modalConfirm = () => {
     }
-    const handleOk = () => {
-        setConfirmLoading(true);
-        setTimeout(() => {
-            setIsModalOpen(false);
-            setConfirmLoading(false);
-        }, 2000);
-    };
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
+
+
 
 
     return (
@@ -316,7 +279,7 @@ export default function () {
                 </Form>
             </div>
             <div style={{ marginBottom: "20px" }}>
-                <Button onClick={(e)=>{toAdd()}} color="cyan">新增</Button>
+                <Button onClick={addClick} color="cyan">新增</Button>
             </div>
             <div className="tableCon">
                 <Table
@@ -335,38 +298,135 @@ export default function () {
                 />;
             </div>
 
-            <Modal title="个人信息"  width={600} open={isModalOpen}
-             onOk={handleOk} onCancel={handleCancel}>
-                <div className="modalContent" style={{ padding: "20px" ,width:'100%'}}>
-                <Form
-                    form={pageForm}
-                    initialValues={pageFormInitialValues}
-                    layout={"horizontal"}
-                    wrapperCol={{ span: 14 }}
-                >
-                    <Form.Item name="username" label="姓名" rules={[{ required: false }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="userNo" label="账号" rules={[{ required: false }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="role" label="角色" rules={[{ required: false }]}>
-                        <Select
-                            // style={{ width: "120px" }}
-                            onChange={onRoleChange}
-                            allowClear
-                        >
-                            <Option value="admin">管理员</Option>
-                            <Option value="user">普通用户</Option>
-                        </Select>
-                    </Form.Item>
-                </Form>
-                    
-                </div>
-            </Modal>
+            <PageFormModal ref={pageFormRef} onConfirm={modalConfirm} />
+
 
         </>
     )
+}
+
+interface PageFormModalProps {
+    onConfirm: () => void;
+}
+
+export const PageFormModal = forwardRef({ onConfirm },ref) => {
+   
+    // 使用此方法才能暴露出去内部方法,通过ref传给pageFormRef
+    useImperativeHandle(ref, () => {
+       return {
+              toAdd:()=>toAdd(),
+              toEdit:()=>toEdit(),
+              selfPorps:()=>console.log('selfPorps')
+       }
+    });
+   
+   
+   
+    // 弹窗modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+
+    
+    // 查询表单
+    const [pageForm] = Form.useForm()
+    const pageFormInitialValues = {
+        userNo: '',
+        username: '',
+        role: '',
+        startDate: '',
+        endDate: '',
+    }
+
+
+    const toAdd = () => {
+        pageForm.setFieldsValue({
+            id: null,
+            userNo: '',
+            username: '',
+            role: '',
+        })
+        showModal()
+    }
+    const toEdit = (data: any = {}) => {
+        pageForm.setFieldsValue({
+            id: data.userNo,
+            ...data,
+        })
+        showModal()
+    }
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const onRoleChange = (value: string) => {
+        switch (value) {
+            case 'admin':
+                pageForm.setFieldValue('note', 'Hi, 管理员');
+                break;
+            case 'user':
+                pageForm.setFieldsValue({ note: 'Hi, 用户!' });
+                break;
+            default:
+        }
+        console.log(pageForm.getFieldsValue());
+    }
+    const handleOk = () => {
+        setConfirmLoading(true);
+        pageForm.validateFields().then((values) => {
+            console.log('Received values of form: ', values);
+            setTimeout(() => {
+                setIsModalOpen(false);
+                setConfirmLoading(false);
+            }, 1000);
+        }).catch((errorInfo) => {
+            console.log('Failed:', errorInfo);
+            setConfirmLoading(false);
+        });
+    };
+
+    const handleCancel = () => {
+        pageForm.resetFields();
+        setIsModalOpen(false);
+        onConfirm()
+    };
+
+    return (
+        <>
+            <Modal title={`${pageForm.getFieldValue('id') ? '编辑' : '新增'} 个人信息`} width={600} open={isModalOpen}
+                onOk={handleOk} onCancel={handleCancel}
+                confirmLoading={confirmLoading}
+            >
+                <div className="modalContent" style={{ padding: "20px", width: '100%' }}>
+                    <Form
+                        form={pageForm}
+                        initialValues={pageFormInitialValues}
+                        layout={"horizontal"}
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 14 }}
+                    >
+                        <Form.Item name="username" label="姓名" rules={[{ required: true }]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item name="userNo" label="账号" rules={[{ required: true }]}>
+                            <Input />
+                        </Form.Item>
+                        <Form.Item name="role" label="角色" rules={[{ required: true }]}>
+                            <Select
+                                // style={{ width: "120px" }}
+                                onChange={onRoleChange}
+                                allowClear
+                            >
+                                <Option value="admin">管理员</Option>
+                                <Option value="user">普通用户</Option>
+                            </Select>
+                        </Form.Item>
+                    </Form>
+
+                </div>
+            </Modal>
+        </>
+    )
+
 }
 
 
