@@ -6,12 +6,12 @@
  */
 import { combineReducers } from 'redux'
 
-
 // * 这是一个 reducer，形式为 (state, action) => state 的纯函数。
 // * 描述了 action 如何把 state 转变成下一个 state。
-//  当 state 变化时需要返回全新的对象，而不是修改传入的参数。
- 
-function visibilityFilter(state = 'SHOW_ALL', action:any) {
+// * 当 state 变化时需要返回全新的对象，而不是修改传入的参数。
+
+// 定义初始状态和处理不同 action 的 reducer
+function visibilityFilter(state = 'SHOW_ALL', action: any) {
   switch (action.type) {
     case 'SET_VISIBILITY_FILTER':
       return action.filter
@@ -20,7 +20,8 @@ function visibilityFilter(state = 'SHOW_ALL', action:any) {
   }
 }
 
-function todos(state = [], action:any) {
+// 定义初始状态和处理不同 action 的 reducer
+function todos(state = [], action: any) {
   switch (action.type) {
     case 'ADD_TODO':
       return [
@@ -44,12 +45,12 @@ function todos(state = [], action:any) {
   }
 }
 
-
+// 使用 combineReducers 将多个 reducer 合并成一个
 const reducer = combineReducers({ visibilityFilter, todos })
 export default reducer 
 
 // 注意上面的写法和下面完全等价
-export  function reducer2 (state = {}, action) {
+export function reducer2(state = {}, action) {
   return {
     visibilityFilter: visibilityFilter(state.visibilityFilter, action),
     todos: todos(state.todos, action)

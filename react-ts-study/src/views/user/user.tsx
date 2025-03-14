@@ -1,23 +1,25 @@
 /*
  * @Date: 2023-12-20 17:41:05
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-13 20:12:59
+ * @LastEditTime: 2025-03-14 19:06:32
  * @descript: 文件描述
  */
 import "./user.css";
-import { useState, useEffect,useRef, forwardRef, useImperativeHandle } from 'react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { Space } from 'antd';
 
 
 import type { FormProps } from 'antd';
-import { Button, Checkbox, Form, Input, Select, } from 'antd';
+import { Button, Checkbox, Form, Input, Select, DatePicker } from 'antd';
 const { Option } = Select;
-
+const { RangePicker } = DatePicker;
+const { TextArea } = Input;
 
 import type { TableProps } from 'antd';
 import { Table, Tag, Tooltip } from 'antd';
 
 import { Modal } from "antd";
+import { use } from "echarts";
 
 
 type FieldType = {
@@ -224,10 +226,15 @@ export default function () {
     }
 
 
-    const pageFormRef = useRef(null);
+    interface PageFormRef {
+        toEdit: (record: any) => void;
+        toAdd: () => void;
+    }
+
+    const pageFormRef = useRef<PageFormRef>(null);
 
     const editClick = (record: any) => {
-        console.log('编辑', record);
+        console.log('编辑');
         pageFormRef?.current?.toEdit(record)
     }
     const deleteClick = (record: any) => {
@@ -239,6 +246,8 @@ export default function () {
     }
 
     const modalConfirm = () => {
+        console.log('modalConfirm');
+        getTableList()
     }
 
 
@@ -310,33 +319,27 @@ interface PageFormModalProps {
 }
 
 export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
-   
+
     // 使用此方法才能暴露出去内部方法,通过ref传给pageFormRef
     useImperativeHandle(ref, () => {
-       return {
-              toAdd:()=>toAdd(),
-              toEdit:()=>toEdit(),
-              selfPorps:()=>console.log('selfPorps')
-       }
+        return {
+            toAdd: () => toAdd(),
+            toEdit: (data: any) => toEdit(data),
+            selfPorps: () => console.log('selfPorps')
+        }
     });
-   
-   
-   
+
     // 弹窗modal
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-
-    
     // 查询表单
     const [pageForm] = Form.useForm()
     const pageFormInitialValues = {
         userNo: '',
         username: '',
         role: '',
-        startDate: '',
-        endDate: '',
+        description: '',
     }
-
 
     const toAdd = () => {
         pageForm.setFieldsValue({
@@ -344,13 +347,18 @@ export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
             userNo: '',
             username: '',
             role: '',
+            description: '',
         })
         showModal()
     }
     const toEdit = (data: any = {}) => {
         pageForm.setFieldsValue({
             id: data.userNo,
-            ...data,
+            userNo: data.userNo,
+            username: data.username,
+            role: data.role,
+            description: data.description,
+
         })
         showModal()
     }
@@ -361,15 +369,24 @@ export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
     const onRoleChange = (value: string) => {
         switch (value) {
             case 'admin':
-                pageForm.setFieldValue('note', 'Hi, 管理员');
+                pageForm.setFieldValue('description', 'Hi, 管理员');
                 break;
             case 'user':
-                pageForm.setFieldsValue({ note: 'Hi, 用户!' });
+                pageForm.setFieldsValue({ description: 'Hi, 用户!' });
                 break;
             default:
         }
         console.log(pageForm.getFieldsValue());
     }
+
+    const onDateChange = (date: any, dateString: string | string[]) => {
+        console.log(date, dateString);
+    }
+    const onDateRangeChange = (dates: any, dateStrings: [string, string]) => {
+        console.log(dates, dateStrings);
+    }
+
+
     const handleOk = () => {
         setConfirmLoading(true);
         pageForm.validateFields().then((values) => {
@@ -377,6 +394,9 @@ export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
             setTimeout(() => {
                 setIsModalOpen(false);
                 setConfirmLoading(false);
+
+                props.onConfirm()
+
             }, 1000);
         }).catch((errorInfo) => {
             console.log('Failed:', errorInfo);
@@ -398,7 +418,7 @@ export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
             >
                 <div className="modalContent" style={{ padding: "20px", width: '100%' }}>
                     <Form
-                        form={pageForm}
+                        form={pageForm} // Ensure the form prop is passed here
                         initialValues={pageFormInitialValues}
                         layout={"horizontal"}
                         labelCol={{ span: 4 }}
@@ -420,6 +440,16 @@ export const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
                                 <Option value="user">普通用户</Option>
                             </Select>
                         </Form.Item>
+                        <Form.Item name="date" label="日期">
+                            <DatePicker onChange={onDateChange}  style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item name="dateRange" label="时间范围">
+                            <RangePicker onChange={onDateRangeChange} style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item name="description" label="描述" rules={[{ required: false }]}>
+                            <TextArea rows={4} />
+                        </Form.Item>
+
                     </Form>
 
                 </div>

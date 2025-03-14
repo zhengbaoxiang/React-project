@@ -11,7 +11,7 @@
     "postbuild": "node ./zip.js"
   },
   "dependencies": {
-    "antd": "^5.12.4",
+    "antd": "^5.22.0",
     "axios": "^1.6.8",
     "compressing": "^1.10.0",
     "dayjs": "^1.11.10",
