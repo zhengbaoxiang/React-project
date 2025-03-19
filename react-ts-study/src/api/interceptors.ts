@@ -1,10 +1,10 @@
 /*
  * @Date: 2024-04-23 17:35:32
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 16:12:11
+ * @LastEditTime: 2025-03-17 13:29:48
  * @descript: 文件描述
  */
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse,InternalAxiosRequestConfig } from 'axios';
 import globalConfig from '@/config';
 // import { getToken } from '@/utils/tools'
 // import { useComStore, useUserStore } from '@/store';
@@ -42,7 +42,7 @@ class HttpRequest {
     }
     interceptors(instance: AxiosInstance) {
         // 拦截请求
-        instance.interceptors.request.use((config: AxiosRequestConfig) => {
+        instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             // dosomething,比如记录日志，加载动画，序列等
             // 为什么不在这里写config呢，是因为接口单独定义的请求头，在这里拦截的话，容易覆盖，所以抽离
             return config

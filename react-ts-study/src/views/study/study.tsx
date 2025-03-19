@@ -1,57 +1,67 @@
 /*
  * @Date: 2023-12-20 15:35:59
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:54:55
+ * @LastEditTime: 2025-03-19 17:52:29
  * @descript: 文件描述
  */
 import { useNavigate, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+
 import { Button, List } from 'antd';
 import "./study.less"
 
 export default function () {
+    // 状态管理，任何需要刷新渲染的数据，必须用setCount来改变count的值,否则不会触发重新渲染
+    let [count, setCount] = useState(0);
+    const [date, setDate] = useState(new Date());
+    const [timer, setTimer] = useState<any>(null);
+    
+    // console.log('状态刷新就会重新执行 count:', count);
+   
+    // 有依赖的useEffect，相当于 Vue watch
+    useEffect(() => {
+        // console.log('渲染触发', 'count变化后触发', count);
+        return () => {
+        }
+    }, [count])
 
-    const [count, setCount] = useState(0);
+    // 相当于 Vue mounted(){}
+    useEffect(() => {
+        console.log('只挂载时触发一次');
+        tick()
+        return () => {
+            // 清除定时器
+            clearInterval(timer);
+        }
+    }, [])
+    // 类似 Vue updated(){}
+    useEffect(() => {
+        // console.log('更新时触发');
+    });
 
+    // 箭头函数
+    const tick = () => {
+        const timer = setInterval(() => {
+            // 在 React 中，useState 的状态更新是异步的，
+            // 在闭包中使用状态时，闭包会捕获初始状态值。在 setInterval 回调中，count 的值一直是初始值 0
+            // console.log('Count', count);
+            // 多次调用会合并,实际只增加1，因为闭包中的count一直是0
+            // setCount(66)
+            // setCount(count + 1)
+            // setCount(count + 1)
+
+            //  通过函数的方式修改state，会触发重新渲染，每次加2
+            setCount(prevCount => prevCount + 1)
+            setCount(prevCount => prevCount + 1);
+            setDate(new Date())
+        }, 1 * 1000)
+        setTimer(timer)
+    }
     function handleClick(params: any) {
         console.log("You clicked me!-params", params);
         setCount(count + 2);
     }
 
-    // 以编程方式导航
-    const navigate = useNavigate();
-    function loginClick() {
-        navigate('/')
-    }
-
-    return (
-        <div className='center' style={{ padding: "1rem " }}>
-            <Button onClick={loginClick}>navigate-返回主页</Button>
-            <p> <Link to="/"> Link - 返回主页</Link>            </p>
-            <MyCom></MyCom>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-            <MyButton count={count} onClick={handleClick}></MyButton>
-
-            <ProductCon></ProductCon>
-            <List
-                style={{ width: 622 }}
-                size='small'
-                header='List title'
-                dataSource={[
-                    'Beijing Bytedance Technology Co., Ltd.',
-                    'Bytedance Technology Co., Ltd.',
-                    'Beijing Toutiao Technology Co., Ltd.',
-                    'Beijing Volcengine Technology Co., Ltd.',
-                    'China Beijing Bytedance Technology Co., Ltd.',
-                ]}
-                renderItem={(item, index) => <List.Item key={index}>{item}</List.Item>}
-            />
-        </div>
-    );
-}
-
-//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
-function MyCom() {
     // 属性绑定
     const user = {
         name: "Hedy Lamarr",
@@ -78,50 +88,58 @@ function MyCom() {
         );
     });
 
+    // 以编程方式导航
+    const navigate = useNavigate();
+    function loginClick() {
+        navigate('/')
+    }
+
     return (
-        <div>
+        <div className='center' style={{ padding: "1rem " }}>
             <div>
-                {/* 数据绑定 */}
-                <button >{user.name}</button>
+                <div>
+                    {/* 数据绑定 */}
+                    <button >{user.name}</button>
 
-                {/* 事件绑定 */}
-                <button onClick={onClick}>1-直接绑定函数变量</button>
-                <button onClick={e => {
-                    e.stopPropagation();
-                    onClick('自定义参数');
-                }}>2-箭头函数绑定按钮</button>
+                    {/* 事件绑定 */}
+                    <button onClick={onClick}>1-直接绑定函数变量</button>
+                    <button onClick={e => { e.stopPropagation(); onClick('自定义参数'); }}>2-箭头函数绑定按钮</button>
 
-                <img
-                    alt="样式、属性"
-                    className="avatar"
-                    src={user.imageUrl}
-                    style={{
-                        width: user.imageSize,
-                        height: user.imageSize,
-                    }}
-                />
+                    <img
+                        alt="样式、属性"
+                        className="avatar"
+                        src={user.imageUrl}
+                        style={{
+                            width: user.imageSize,
+                            height: user.imageSize,
+                        }}
+                    />
+                </div>
+                {/* 列表渲染 */}
+                <ul>{ListItems}</ul>
             </div>
-            {/* 列表渲染 */}
-            <ul>{ListItems}</ul>; 
-        </div> 
+            <hr />
+            <p style={{ display: 'block', marginLeft: '30px' }}>{count}—_____{date.toLocaleTimeString()} </p>
+            <MyButton count={count} onClick={handleClick}></MyButton>
+            <MyButton count={count} onClick={handleClick}></MyButton>
+            <hr />
+            <ProductCon></ProductCon>
+            <hr />
+            <p>
+                {/* <Link to="/"> Link - 返回主页  </Link> */}
+                <Button onClick={loginClick}>navigate-返回主页</Button>
+            </p>
+            <MovingDot></MovingDot>
+        </div>
     );
 }
-function MyButton({ count, onClick }:{count:number,onClick:any}) {
-    // 状态绑定、修改
-    const [number, setNumber] = useState(0);
 
+//   React 组件是返回标记的 JavaScript 函数：必须始终以大写字母开头
+function MyButton({ count, onClick }: { count: number, onClick: any }) {
     return (
         <div>
             <button onClick={onClick}>1-Click 共享 - {count} - 次</button>
             <button onClick={e => { e.stopPropagation(); onClick(123445); }}> 2- 共享{count}</button>
-            <button onClick={() => {
-                setNumber(42);
-                setNumber(number + 5);
-                setNumber(number + 5);
-                setNumber(n => n + 1);
-            }}>3、批量修改状态-{number}</button>
-
-
         </div>
     )
 }
@@ -155,12 +173,30 @@ export function ProductCon() {
     );
 }
 
+interface SearchBarProps {
+    filterText: string;
+    inStockOnly: boolean;
+    onFilterTextChange: (text: string) => void;
+    onInStockOnlyChange: (inStock: boolean) => void;
+}
+interface Product {
+    category: string;
+    price: string;
+    stocked: boolean;
+    name: string;
+}
+interface ProductTableProps {
+    products: Product[];
+    filterText: string;
+    inStockOnly: boolean;
+}
+
 export function SearchBar({
     filterText,
     inStockOnly,
     onFilterTextChange,
     onInStockOnlyChange,
-}) {
+}: SearchBarProps) {
     return (
         <div>
             <input
@@ -172,16 +208,18 @@ export function SearchBar({
                 <input
                     type="checkbox"
                     checked={inStockOnly}
-                    onChange={(e) => { onInStockOnlyChange(e.target.value); console.log(inStockOnly) }}
+                    onChange={(e) => { onInStockOnlyChange(e.target.checked); console.log(inStockOnly, e.target.checked) }}
                 />{" "}
-                only show produce in stock
+                only show produce in stock {inStockOnly + ''}
             </label>
         </div>
     );
 }
-export function ProductTable({ products, filterText, inStockOnly }) {
-    const rows = [];
-    let lastCategory = null;
+
+
+export function ProductTable({ products, filterText, inStockOnly }: ProductTableProps) {
+    const rows: any[] = [];
+    let lastCategory: string | null = null;
     products.forEach((item) => {
         if (item.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
             return;
@@ -215,14 +253,16 @@ export function ProductTable({ products, filterText, inStockOnly }) {
     );
 }
 
-export function ProductCatory({ category }) {
+export function ProductCatory({ category }: { category: string }) {
     return (
         <tr>
             <th colSpan={2}>{category}</th>
         </tr>
     );
 }
-export function ProductRow({ product }) {
+
+
+export function ProductRow({ product }: { product: Product }) {
     const name = product.stocked ? (
         product.name
     ) : (
@@ -237,31 +277,33 @@ export function ProductRow({ product }) {
 }
 
 function MovingDot() {
-    const [position, setPosition] = useState({
-        x: 0,
-        y: 0
-    });
+    const [position, setPosition] = useState({ x: 0, y: 0 });
     return (
         <div
             onPointerMove={e => {
-                position.x = e.clientX;
-                position.y = e.clientY;
+                setPosition({
+                    x: e.clientX,
+                    y: e.clientY
+                });
             }}
             style={{
-                position: 'relative',
-                width: '100vw',
-                height: '100vh',
+                width: '100%',
+                height: '300px',
+                border: '1px solid black',
             }}>
-            <div style={{
-                position: 'absolute',
-                backgroundColor: 'red',
-                borderRadius: '50%',
-                transform: `translate(${position.x}px, ${position.y}px)`,
-                left: -10,
-                top: -10,
-                width: 20,
-                height: 20,
-            }} />
+            <div
+                onPointerMove={e => e.stopPropagation()}
+                style={{
+                    position: 'absolute',
+                    backgroundColor: 'red',
+                    borderRadius: '50%',
+                    transform: `translate(${position.x}px, ${position.y}px)`,
+                    left: -10,
+                    top: -10,
+                    width: 20,
+                    height: 20,
+                }}
+            />
         </div>
     );
 }

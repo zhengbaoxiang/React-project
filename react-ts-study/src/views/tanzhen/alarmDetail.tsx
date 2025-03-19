@@ -1,7 +1,7 @@
 /*
  * @Date: 2024-04-19 16:46:06
  * @LastEditors: zbx
- * @LastEditTime: 2024-04-29 13:37:49
+ * @LastEditTime: 2025-03-17 13:34:55
  * @descript: 文件描述
  */
 import dayjs from 'dayjs';
@@ -63,7 +63,7 @@ const HandleForm: React.FC = () => {
     }
     const onDateChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
-        setFixTime(dateString)
+        setFixTime(dateString as string)
     };
 
     const submit = (e: any) => {
