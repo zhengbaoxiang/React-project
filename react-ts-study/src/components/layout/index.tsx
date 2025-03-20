@@ -1,52 +1,103 @@
 /*
  * @Date: 2023-12-20 19:19:58
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 17:33:48
+ * @LastEditTime: 2025-03-20 17:46:10
  * @descript: 文件描述
  */
-import React from 'react';
-import { Layout, Flex } from 'antd';
-import { Routes, Route, Outlet, NavLink, Link } from "react-router-dom";
-const { Header, Footer, Sider, Content } = Layout;
+import React, { useState } from 'react';
+import { Routes, Route, Outlet, useNavigate, NavLink, Link } from "react-router-dom";
+import { Layout, Flex, Menu } from 'antd';
+const { Header, Sider, Content, Footer } = Layout;
+import type { MenuProps } from 'antd';
+
 import "./index.less"
 
-import routeList from "@/routes/routes"
+import routeList from "@/route/routes"
 
+function hasPermission (item:any){
+    // 没写权限点，就直接返回
+    if(!item.meta.permissions || item.meta.permissions.length=== 0) return true
 
+    if(item.meta.permissions.includes('*')) return true
+
+    // 从全局store拿到当前用户的权限点
+    const permissions = ['admin','user','study','tanzhen']
+    // 交叉判断 access 是否 在 permissions 中
+    let access = item.meta.permissions;
+    return access.some((perm: string) => permissions.includes(perm));
+
+}
 
 export default function layout() {
+    const [collapsed, setCollapsed] = useState(false)
 
-    // const menuList = routeList.map((item) => {
-    //     return <p key={item.path}><NavLink to={item.path}>{item.meta.title}</NavLink></p>
-    // })
-    
+
+    const getMenuList = (routeList: any) => {
+        if (!routeList) return null
+
+        // 过滤掉隐藏的菜单
+        routeList = routeList.filter((item: any) => !item.meta.hideInMenu)
+
+        // 过滤掉需要权限的菜单，假设权限点列表 permissions
+        routeList = routeList.filter((item:any)=>{
+            return hasPermission(item)
+        })
+
+
+        return routeList.map((item: any) => {
+            const icon = item.meta.icon
+            return {
+                key: `${item.name}`,
+                label: `${item.meta.title}`,
+                icon: icon ? React.createElement(icon) : null,
+                children: getMenuList(item.children)
+            }
+        })
+    }
+    const menuList: MenuProps['items'] = getMenuList(routeList)
+
+
+    const navigate = useNavigate();
+    // 以编程方式导航
+    const menuItemClick = (item: any) => {
+        console.log(item)
+        navigate(item.key)
+    }
 
     return (
         <>
             <Layout className="layoutCon">
-                <Header className="hdr">
-                </Header>
+                <Sider theme="light" width="250px" className="siderCon" collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} >
+                    <div className="siderBar">
+                        <h3 className="title center" style={{height:'50px',margin:0,lineHeight:'50px'}}>React项目</h3>
+                        <Menu
+                            theme="light"
+                            mode="inline"
+                            defaultSelectedKeys={['home']}
+                            defaultOpenKeys={['_home']}
+                            style={{ flex: 1, minWidth: 0 }}
+                            items={menuList}
+                            onClick={menuItemClick}
+                        />
+                        {/* <div className="menu">
+                            <p>  <Link to="/">主页</Link></p>
+                            <p>  <Link to="/user">用户列表-function</Link></p>
+                            <p>  <Link to="/user2">用户列表-class</Link></p>
+                            <p>  <NavLink to="/study">学习汇总</NavLink></p>
+                            <p>  <NavLink to="/template">模板页</NavLink></p>
+                            <p>  <NavLink to="/alarmDetail">探针</NavLink></p>
+                        </div> */}
+                    </div>
+                </Sider>
                 <Layout className="mainCon">
-                    <Sider width="250px" className="siderCon">
-                        <div className="siderBar">
-                            <h3 className="title center">后台项目</h3>
-                            <div className="menu">
-                                <p>  <Link to="/">主页</Link></p>
-                                <p>  <Link to="/user">用户列表-function</Link></p>
-                                <p>  <Link to="/user2">用户列表-class</Link></p>
+                    <Header className="hdr" style={{ display: 'flex', alignItems: 'center' }}>
 
-                                {/*NavLink 动态链接 */}
-                                <p>  <NavLink to="/study">学习汇总</NavLink></p>
-                                <p>  <NavLink to="/template">模板页</NavLink></p>
-                                <p>  <NavLink to="/alarmDetail">探针</NavLink></p>
-                            </div>
-                        </div>
-                    </Sider>
+                    </Header>
                     <Content className="mainContent bdy">
+                        {/* 子路由 */}
                         <Outlet />
                     </Content>
                 </Layout>
-                {/* <Footer >Footer</Footer> */}
             </Layout>
         </>
     )

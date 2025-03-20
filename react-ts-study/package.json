@@ -11,6 +11,7 @@
     "postbuild": "node ./zip.js"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "antd": "^5.22.0",
     "axios": "^1.6.8",
     "compressing": "^1.10.0",

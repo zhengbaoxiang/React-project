@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-07-17 09:59:27
  * @LastEditors: zbx
- * @LastEditTime: 2024-01-24 16:22:45
+ * @LastEditTime: 2025-03-20 16:20:16
  * @descript: 文件描述
  */
 
@@ -18,11 +18,9 @@ export default {
 
     // 账密登录
     loginUrl: `${process.env.base}/login`,
-    // sso登录    
 
     // 集团测试
     // oaLoginUrl: `http://61.152.230.36:8000/bd-cas/login?service=${process.env.serviceHost + process.env.baseURL}/User/OALogin`,
-
     // 集团用户正式登录地址    ?service=https://pcmp.eastmoney.com/auth/cas/casLoginFilter
     oaLoginUrl: `https://eastmoney-office.eastmoney.com/bd-cas/login?service=${process.env.serviceHost + process.env.baseURL}/User/Cor_OALogin`,
     // 非集团用户登录地址  ?service=https://pcmp.eastmoney.com/auth/securities/cas/casLoginFilter

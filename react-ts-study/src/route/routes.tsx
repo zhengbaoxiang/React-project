@@ -1,12 +1,10 @@
 /*
  * @Date: 2023-12-20 19:53:11
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-13 11:04:16
+ * @LastEditTime: 2025-03-20 17:48:33
  * @descript: 文件描述
  */
 import { Suspense, lazy } from "react"
-import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
-
 
 
 import Layout from "@/components/layout";
@@ -23,10 +21,22 @@ const Template = lazy(() => import("@/views/template"))
 const AlarmDetail = lazy(() => import("@/views/tanzhen/alarmDetail"))
 
 
-import  Study  from "@/views/study/study";
+import Study from "@/views/study/study";
 import User from "@/views/user/user"
 import User2 from "@/views/user/user-class"
 
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+
+interface RouteMeta {
+    title: string;
+    // options
+    requiresAuth?: boolean; //  login
+    permissions?: string[]; // 权限点
+    icon?: string;
+    // menu select key
+    menuSelectKey?: string;
+    hideInMenu?: boolean;
+}
 
 export default [
     {
@@ -34,17 +44,18 @@ export default [
         name: '_home',
         element: <Layout />,
         meta: {
-            title: '主页'
+            title: '主页',
+            icon: HomeOutlined
         },
         children: [
             {
                 // 注意，它有' index '属性而不是' path '。
                 // 这是因为索引路由共享父路由的路径。这就是重点——它没有路径。
                 // index:true,  // 索引路由可以被认为是“默认子路由”,使用索引路由，则不要设置path
-                path: '/',
+                path: '/home',
                 name: 'home',
                 meta: {
-                    title: '主页'
+                    title: '首页',
                 },
                 element: <Suspense fallback={<></>}><Home /> </Suspense>
             },
@@ -52,7 +63,9 @@ export default [
                 path: '/user',
                 name: 'user',
                 meta: {
-                    title: '用户列表-function'
+                    title: '用户列表-function',
+                    icon:UserOutlined,
+                    permissions:['user']
                 },
                 element: <Suspense fallback={<></>}><User /> </Suspense>
             },
@@ -61,23 +74,30 @@ export default [
                 path: '/user2',
                 name: 'user2',
                 meta: {
-                    title: '用户列表-class'
+                    title: '用户列表-class',
+                    icon:UserOutlined,
+                    permissions:['user']
+
                 },
                 element: <Suspense fallback={<></>}><User2 /> </Suspense>
             },
             {
-                path: '/study',
+                path: 'study',
                 name: 'study',
                 meta: {
-                    title: '学习汇总'
+                    title: '学习汇总',
+                    permissions:['*']
+
                 },
                 element: <Suspense fallback={<></>}><Study /> </Suspense>
             },
             {
-                path: '/template',
+                path: 'template',
                 name: 'template',
                 meta: {
-                    title: '模板页'
+                    title: '模板页',
+                    permissions:['admin'],
+                    // hideInMenu: true
                 },
                 element: <Suspense fallback={<></>}><Template /> </Suspense>
             },
@@ -87,7 +107,8 @@ export default [
         path: '/alarmDetail',
         name: 'alarmDetail',
         meta: {
-            title: '探针'
+            title: '探针',
+            permissions:['tanzhen'],
         },
         element: <Suspense fallback={<></>}><AlarmDetail /> </Suspense>
     },
@@ -104,7 +125,8 @@ export default [
         path: "*",
         name: 'notfound',
         meta: {
-            title: '404'
+            title: '404',
+            hideInMenu: true
         },
         element: <main style={{ padding: "1rem" }}><p>404 not found</p></main>
     },

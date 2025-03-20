@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-07-14 14:13:43
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-12 16:23:52
+ * @LastEditTime: 2025-03-20 16:17:32
  * @descript: 文件描述
  */
 
@@ -12,7 +12,7 @@ export default mergeConfig(
     {
         mode: 'development',
         server: {
-            host: '172.31.227.198',
+            host: '0.0.0.0',
             port: 8085,
             open: true,
             fs: {
