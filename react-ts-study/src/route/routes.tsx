@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 19:53:11
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 17:48:33
+ * @LastEditTime: 2025-03-20 19:50:11
  * @descript: 文件描述
  */
 import { Suspense, lazy } from "react"
@@ -120,6 +120,15 @@ export default [
             hideInMenu: true
         },
         element: <Suspense fallback={<></>}><Login /> </Suspense>
+    },
+    {
+        path: "/403",
+        name: '403',
+        meta: {
+            title: '403',
+            hideInMenu: true
+        },
+        element: <main style={{ padding: "1rem" }}><p>没有权限查看</p></main>
     },
     {
         path: "*",

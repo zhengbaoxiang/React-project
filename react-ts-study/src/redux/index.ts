@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-09-26 14:00:45
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-19 16:27:37
+ * @LastEditTime: 2025-03-20 19:45:45
  * @descript: 文件描述todo
  */
 
@@ -15,7 +15,8 @@ import reducer from './reducers'
 // 定义初始状态
 const initialState = {
     visibilityFilter: 'SHOW_ALL',
-    userList: []
+    userList: [],
+    permissions:['admin','user','study','tanzhen']
 };
 
 // 创建 Redux store 来存放应用的状态
@@ -23,7 +24,7 @@ const store = createStore(reducer, initialState)
 export default store
 
 // 1、 获取初始状态
-console.log('store', store.getState())
+// console.log('store', store.getState())
 
 // 2、 监听 state 变化
 // 注意 subscribe() 返回一个函数用来注销监听器

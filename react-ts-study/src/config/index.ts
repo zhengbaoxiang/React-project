@@ -1,11 +1,11 @@
 /*
  * @Date: 2023-07-17 09:59:27
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 16:20:16
+ * @LastEditTime: 2025-03-20 19:45:59
  * @descript: 文件描述
  */
 
-console.log('-import.meta>', import.meta.env)
+// console.log('-import.meta>', import.meta.env)
 
 export default {
     title: '东财私信',

@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-07-14 14:13:43
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 16:17:32
+ * @LastEditTime: 2025-03-20 18:22:40
  * @descript: 文件描述
  */
 
@@ -17,6 +17,9 @@ export default mergeConfig(
             open: true,
             fs: {
                 strict: false,
+            },
+            hmr: {
+                overlay: false, // 可选：关闭 HMR 错误覆盖层
             },
             proxy: {
                 '/api': {

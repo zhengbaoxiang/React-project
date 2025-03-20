@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-09-26 14:00:59
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-17 15:53:00
+ * @LastEditTime: 2025-03-20 19:27:18
  * @descript: 文件描述
  */
 import { combineReducers } from 'redux'
@@ -49,9 +49,17 @@ function userList(state: User[] = [], action: any) {
             return state
     }
 }
+function permissions(state: any = {}, action: any) {
+    switch (action.type) {
+        case 'SET_PERMISSIONS':
+            return action.payload
+        default:
+            return state
+    }
+}
 
 // 使用 combineReducers 将多个 reducer 合并成一个
-const reducer = combineReducers({ visibilityFilter, userList })
+const reducer = combineReducers({ visibilityFilter, userList,permissions })
 export default reducer
 
 // 注意上面的写法和下面完全等价
