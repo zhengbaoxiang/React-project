@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 19:19:58
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 19:30:39
+ * @LastEditTime: 2025-03-20 20:11:02
  * @descript: 文件描述
  */
 import React, { useState } from 'react';
@@ -35,7 +35,7 @@ const MyLayout: React.FC = () => {
     // 从全局store拿到当前用户的权限点
     // const permissions = ['admin','user','study','tanzhen']
     const permissions = useSelector((state: { permissions: string[] }) => {
-        console.log('state',state)
+        // console.log('state',state)
         return state.permissions
     })
 
