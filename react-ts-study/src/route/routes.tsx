@@ -1,7 +1,7 @@
 /*
  * @Date: 2023-12-20 19:53:11
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 19:50:11
+ * @LastEditTime: 2025-03-21 17:48:33
  * @descript: 文件描述
  */
 import { Suspense, lazy } from "react"
@@ -41,7 +41,7 @@ interface RouteMeta {
 export default [
     {
         path: '/',
-        name: '_home',
+        name: '/',
         element: <Layout />,
         meta: {
             title: '主页',
@@ -52,7 +52,7 @@ export default [
                 // 注意，它有' index '属性而不是' path '。
                 // 这是因为索引路由共享父路由的路径。这就是重点——它没有路径。
                 // index:true,  // 索引路由可以被认为是“默认子路由”,使用索引路由，则不要设置path
-                path: '/home',
+                path: 'home',
                 name: 'home',
                 meta: {
                     title: '首页',
@@ -60,33 +60,11 @@ export default [
                 element: <Suspense fallback={<></>}><Home /> </Suspense>
             },
             {
-                path: '/user',
-                name: 'user',
-                meta: {
-                    title: '用户列表-function',
-                    icon:UserOutlined,
-                    permissions:['user']
-                },
-                element: <Suspense fallback={<></>}><User /> </Suspense>
-            },
-
-            {
-                path: '/user2',
-                name: 'user2',
-                meta: {
-                    title: '用户列表-class',
-                    icon:UserOutlined,
-                    permissions:['user']
-
-                },
-                element: <Suspense fallback={<></>}><User2 /> </Suspense>
-            },
-            {
                 path: 'study',
                 name: 'study',
                 meta: {
                     title: '学习汇总',
-                    permissions:['*']
+                    permissions: ['*']
 
                 },
                 element: <Suspense fallback={<></>}><Study /> </Suspense>
@@ -96,10 +74,41 @@ export default [
                 name: 'template',
                 meta: {
                     title: '模板页',
-                    permissions:['admin'],
+                    permissions: ['admin'],
                     // hideInMenu: true
                 },
                 element: <Suspense fallback={<></>}><Template /> </Suspense>
+            },
+        ]
+    },
+    {
+        path: '/sys',
+        name: 'sys',
+        element: <Layout />,
+        meta: {
+            title: '系统管理',
+        },
+        children: [
+            {
+                path: 'user',
+                name: 'user',
+                meta: {
+                    title: '用户列表-function',
+                    icon: UserOutlined,
+                    permissions: ['user']
+                },
+                element: <Suspense fallback={<></>}><User /> </Suspense>
+            },
+            {
+                path: 'user2',
+                name: 'user2',
+                meta: {
+                    title: '用户列表-class',
+                    icon: UserOutlined,
+                    permissions: ['user']
+
+                },
+                element: <Suspense fallback={<></>}><User2 /> </Suspense>
             },
         ]
     },
@@ -108,7 +117,7 @@ export default [
         name: 'alarmDetail',
         meta: {
             title: '探针',
-            permissions:['tanzhen'],
+            permissions: ['tanzhen'],
         },
         element: <Suspense fallback={<></>}><AlarmDetail /> </Suspense>
     },

@@ -1,7 +1,7 @@
 /*
  * @Date: 2025-03-20 19:34:26
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 20:12:50
+ * @LastEditTime: 2025-03-21 10:11:10
  * @descript: 文件描述
  */
 import request from './request'
@@ -18,7 +18,7 @@ export const getUserInfo = (data: any) => {
             name: 'zbx',
             age: 18,
             role: 'admin',
-            permissions: ['admin','user','study','tanzhen'],
+            permissions: ['admin','study','tanzhen'],
         },
     });
 };

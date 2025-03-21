@@ -1,12 +1,12 @@
 /*
  * @Date: 2023-12-20 19:19:58
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 20:11:02
+ * @LastEditTime: 2025-03-21 17:52:03
  * @descript: 文件描述
  */
-import React, { useState } from 'react';
-import { Routes, Route, Outlet, useNavigate, NavLink, Link } from "react-router-dom";
-import { Layout, Flex, Menu,Avatar } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Outlet, useNavigate, useLocation, useResolvedPath,NavLink, Link } from "react-router-dom";
+import { Layout, Flex, Menu, Avatar } from 'antd';
 const { Header, Sider, Content, Footer } = Layout;
 import type { MenuProps } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -17,7 +17,8 @@ import routeList from "@/route/routes"
 import { useSelector, useDispatch } from 'react-redux';
 
 
-function hasPermission(permissions:string[],item: any) {
+function hasPermission(permissions: string[], item: any) {
+
     // 没写权限点，就直接返回
     if (!item.meta.permissions || item.meta.permissions.length === 0) return true
 
@@ -31,13 +32,27 @@ function hasPermission(permissions:string[],item: any) {
 
 const MyLayout: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false)
+    const [currentMenu, setCurrentMenu] = useState<string[]>(['home'])
+    const location = useLocation();
+    useEffect(() => {
+        console.log('layout-location', location)
+        if (location.pathname === '/') {
+            setCurrentMenu(['home'])
+        } else {
+            // 拿到当前路由的路径，然后切割成数组，去掉空字符串，作为菜单选中项
+            const keys = location.pathname.split('/').filter(Boolean)
+            console.log('keys', keys)
+            setCurrentMenu(keys)
+        }
+    }, [location])
 
     // 从全局store拿到当前用户的权限点
     // const permissions = ['admin','user','study','tanzhen']
     const permissions = useSelector((state: { permissions: string[] }) => {
-        // console.log('state',state)
+        console.log('layout-state', state)
         return state.permissions
     })
+
 
     const getMenuList = (routeList: any) => {
         if (!routeList) return null
@@ -47,7 +62,7 @@ const MyLayout: React.FC = () => {
 
         // 过滤掉需要权限的菜单，假设权限点列表 permissions
         routeList = routeList.filter((item: any) => {
-            return hasPermission(permissions,item)
+            return hasPermission(permissions, item)
         })
 
 
@@ -66,8 +81,9 @@ const MyLayout: React.FC = () => {
     const navigate = useNavigate();
     // 以编程方式导航
     const menuItemClick = (item: any) => {
-        console.log(item)
-        navigate(item.key)
+        let path ='/' + item.keyPath.reverse().join('/');
+        console.log(item,path)
+        navigate(path);
     }
 
     return (
@@ -79,8 +95,8 @@ const MyLayout: React.FC = () => {
                         <Menu
                             theme="light"
                             mode="inline"
-                            defaultSelectedKeys={['home']}
-                            defaultOpenKeys={['_home']}
+                            defaultSelectedKeys={currentMenu}
+                            defaultOpenKeys={['/']}
                             style={{ flex: 1, minWidth: 0 }}
                             items={menuList}
                             onClick={menuItemClick}

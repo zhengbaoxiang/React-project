@@ -1,12 +1,11 @@
 /*
  * @Date: 2023-12-20 15:35:18
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-20 20:15:19
+ * @LastEditTime: 2025-03-21 18:00:49
  * @descript: 文件描述
  */
 import { useEffect, useState } from "react";
 import { useRoutes, useNavigate, Navigate, useLocation } from "react-router-dom";
-import axios from "axios"; // 假设使用axios进行HTTP请求
 import { getUserInfo } from "@/api/system"
 
 import routeList from "./routes";
@@ -22,7 +21,7 @@ const getUserPermissions = async () => {
     const token = getToken();
     try {
         const response = await getUserInfo({ token: token });
-        console.log("getUserInfo response:", response);
+        console.log("4 getUserInfo response:", response);
         const list = response.data?.permissions || [];
         return list;
     } catch (error) {
@@ -30,15 +29,32 @@ const getUserPermissions = async () => {
         return [];
     }
 };
+// 根据path,找出routeList中对应的路由配置信息
+function hasPermission(path: string,permissions:string[]) {
+    const pathList = path.split("/").filter(Boolean); // 过滤掉空字符串
+    console.log("6 pathList:", pathList);
+
+
+    return true
+   
+}
+
+
+
 
 export const Router = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
-    let navigate = useNavigate();
+    const [permissions, setPermissions] = useState<string[]>([]);
+    const [hasAuth, setHasAuth] = useState<boolean>(false)
+
+    // 每次进入页面刷新页面，跳转页面都会运行到这
+    console.log("1 location:", location);
 
     useEffect(() => {
         const token = getToken();
-        console.log("2 token:", token);
+        console.log("3 token:", token);
         // 如果token存在，则认为是已认证用户
         if (!token && location.pathname !== "/login") {
             // 无 token，跳转到登录页
@@ -51,19 +67,19 @@ export const Router = () => {
         } else {
             getUserPermissions().then((permissions: string[]) => {
                 // 假设只要获取到权限就允许进入
-                console.log("getUserPermissions permissions:", permissions);
+                console.log("5 getUserPermissions permissions:", permissions);
+                setPermissions(permissions);
 
-                const hasPermission = permissions.length > 0;
-                if (!hasPermission) {
-                    return <Navigate to="/403" replace />; // 假设有一个无权限访问页面
-                } else {
-                    navigate(location.pathname, { replace: true });
+               const hasPer =  hasPermission(location.pathname, permissions)
+
+                if (!hasPer) {
+                    navigate('/403', { replace: false });
                 }
             });
 
         }
     }, [location]); // 依赖location，确保每次路由变化时都会执行
 
-    console.log("3 location:", location);
+    console.log("2 location:", location);
     return useRoutes(routeList);
 };
