@@ -1,8 +1,9 @@
 /*
  * @Date: 2023-12-20 19:19:58
  * @LastEditors: zbx
- * @LastEditTime: 2025-03-21 17:52:03
- * @descript: 文件描述
+ * @LastEditTime: 2025-04-15 09:16:29
+ * @descript: 布局组件
+
  */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Outlet, useNavigate, useLocation, useResolvedPath,NavLink, Link } from "react-router-dom";

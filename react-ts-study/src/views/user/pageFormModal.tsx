@@ -12,7 +12,7 @@ const { TextArea } = Input;
 interface PageFormModalProps {
     onConfirm: (values: any) => void;
 }
-
+// 使用forwardRef创建组件，并通过ref暴露内部方法
 const PageFormModal = forwardRef((props: PageFormModalProps, ref) => {
 
     // 使用此方法才能暴露出去内部方法,通过ref传给pageFormRef
